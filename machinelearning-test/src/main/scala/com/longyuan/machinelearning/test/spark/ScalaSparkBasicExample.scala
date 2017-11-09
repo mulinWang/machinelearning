@@ -1,6 +1,6 @@
 package com.longyuan.machinelearning.test.spark
 
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.sql.SparkSession
 import org.scalatest.FunSuite
 
 import scala.collection.mutable.ArrayBuffer
@@ -13,20 +13,18 @@ class ScalaSparkBasicExample extends FunSuite {
   /**
     * 初始化Spark Context实例，lazy 表示懒加载
     */
-  lazy val sc: SparkContext = {
-    val conf = new SparkConf()
-      .setAppName("UsageMain")
-      .setMaster("local[*]");
-
-    new SparkContext(conf)
-  }
-
+  lazy val spark = SparkSession
+    .builder
+    .appName("ScalaSparkBasicExample")
+    .master("local[*]")
+    .getOrCreate()
   /**
     * 测试 map函数
     * map是对RDD中的每个元素都执行一个指定的函数来产生一个新的RDD。 任何原RDD中的元素在新RDD中都有且只有一个元素与之对应。
     */
   test("map test") {
-    val rdd = sc.parallelize(Array(1, 2, 3, 4, 5, 6), 2)
+
+    val rdd = spark.sparkContext.parallelize(Array(1, 2, 3, 4, 5, 6), 2)
     val result = rdd.map(f => f * 2)
     println(s"[测试 map函数]MAP返回结果:${result.count}")
     result.foreach(id => println(s"转换结果：$id"))
@@ -42,7 +40,7 @@ class ScalaSparkBasicExample extends FunSuite {
 
     val list: Array[(Int, Int)] = Array((1, 3), (1, 2), (1, 4), (2, 3))
 
-    val rdd = sc.parallelize(list)
+    val rdd = spark.sparkContext.parallelize(list)
     println(s"分片数：${rdd.partitions.size}")
 
     val result = rdd.mapValues(v => v * 2)
@@ -64,7 +62,7 @@ class ScalaSparkBasicExample extends FunSuite {
     * 简单来说就是 自函子范畴上的一个协变函子的态射函数与自然变换的组合
     */
   test("flatMap test"){
-    val rdd = sc.parallelize(Array(1, 2, 3, 4), 2)
+    val rdd = spark.sparkContext.parallelize(Array(1, 2, 3, 4), 2)
     val result = rdd.flatMap(t => {
       val list = ArrayBuffer.empty[Int]
       for ( i <- 0 until t) {
@@ -83,7 +81,7 @@ class ScalaSparkBasicExample extends FunSuite {
     * 而mapPartitions的输入函数是应用于每个分区，也就是把每个分区中的内容作为整体来处理的。
     */
   test("mapPartitions test")  {
-    val rdd = sc.parallelize(Array(1, 2, 3, 4, 5, 6, 7, 8, 9), 3)
+    val rdd = spark.sparkContext.parallelize(Array(1, 2, 3, 4, 5, 6, 7, 8, 9), 3)
     println(s"rdd分区大小:${rdd.partitions.size}")
 
     val result = rdd.mapPartitions(t => {
@@ -104,7 +102,7 @@ class ScalaSparkBasicExample extends FunSuite {
     * mapPartitionsWithIndex是函数作用同mapPartitions，不过提供了两个参数，第一个参数为分区的索引。
     */
   test("mapPartitionsWithIndex test"){
-    val rdd = sc.parallelize(Array(1, 2, 3, 4, 5), 2)
+    val rdd = spark.sparkContext.parallelize(Array(1, 2, 3, 4, 5), 2)
     println(s"rdd分区大小:${rdd.partitions.size}")
 
     val result = rdd.mapPartitionsWithIndex((index, arr) => {
@@ -137,7 +135,7 @@ class ScalaSparkBasicExample extends FunSuite {
     * 聚合返回结果:16
     */
   test("aggregate test") {
-    val rdd = sc.parallelize(Array(1, 2, 3, 4, 5, 6), 2)
+    val rdd = spark.sparkContext.parallelize(Array(1, 2, 3, 4, 5, 6), 2)
     val result = rdd.aggregate(11)((a, b) => {
       println(s"seqOp: $a, $b")
       Math.min(a, b)
@@ -153,7 +151,7 @@ class ScalaSparkBasicExample extends FunSuite {
     * reduce将RDD中元素两两传递给输入函数，同时产生一个新的值，新产生的值与RDD中下一个元素再被传递给输入函数直到最后只有一个值为止。
     */
   test("reduce test") {
-    val rdd = sc.parallelize(Array(1, 2, 3, 4, 5, 6), 2)
+    val rdd = spark.sparkContext.parallelize(Array(1, 2, 3, 4, 5, 6), 2)
     // 测试reduce函数
     val result = rdd.reduce((m, n) => m + n)
 
@@ -164,7 +162,7 @@ class ScalaSparkBasicExample extends FunSuite {
     * fold和reduce的原理相同，但是与reduce不同，相当于每个reduce时，迭代器取的第一个元素是zeroValue
     */
   test("fold test") {
-    val rdd = sc.parallelize(Array(1, 2, 3, 4))
+    val rdd = spark.sparkContext.parallelize(Array(1, 2, 3, 4))
     val result = rdd.fold(3)((a, b) => {
       println(s"$a + $b = ${(a + b)}")
       a + b
@@ -179,7 +177,7 @@ class ScalaSparkBasicExample extends FunSuite {
     val list: Array[(Int, Int)] = Array((1, 3), (1, 2), (2, 4), (2, 3))
 
     // 测试reduceByKey函数
-    val rdd = sc.parallelize(list)
+    val rdd = spark.sparkContext.parallelize(list)
     val result = rdd.reduceByKey((m, n) => m + n)
 
     println(s"[测试 reduceByKey函数]返回结果: ${result.map(t => {s"${t._1}=${t._2}"}).collect.mkString(",")}")
@@ -190,8 +188,8 @@ class ScalaSparkBasicExample extends FunSuite {
     * [测试 zip 函数]返回结果:[(1,a), (2,b), (3,c), (4,d), (5,e), (6,f), (7,g), (8,h), (9,i), (10,j)]
     */
   test("zip test"){
-    val rdd1 = sc.parallelize(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
-    val rdd2 = sc.parallelize(Array("a", "b", "c", "d", "e", "f", "g", "h", "i", "j"))
+    val rdd1 = spark.sparkContext.parallelize(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+    val rdd2 = spark.sparkContext.parallelize(Array("a", "b", "c", "d", "e", "f", "g", "h", "i", "j"))
     val result = rdd1.zip(rdd2)
     println(s"[测试 zip 函数]返回结果: ${result.collect.mkString(", ")}")
   }
@@ -201,7 +199,7 @@ class ScalaSparkBasicExample extends FunSuite {
     * [测试 glom函数]返回结果:[[1, 2, 3], [4, 5, 6]]
     */
   test("glom test") {
-    val rdd = sc.parallelize(Array(1, 2, 3, 4, 5, 6), 2)
+    val rdd = spark.sparkContext.parallelize(Array(1, 2, 3, 4, 5, 6), 2)
     val result = rdd.glom
     println(s"[测试 glom函数]返回结果: ${result.map(arr => s"${arr.mkString("[", ", ", "]")} ").collect.mkString(",")}")
   }
@@ -212,8 +210,8 @@ class ScalaSparkBasicExample extends FunSuite {
     */
   test("cartesian test") {
     // 测试cartesian函数
-    val rdd1 = sc.parallelize(Array(1, 2, 3))
-    val rdd2 = sc.parallelize(Array(4, 5, 6))
+    val rdd1 = spark.sparkContext.parallelize(Array(1, 2, 3))
+    val rdd2 = spark.sparkContext.parallelize(Array(4, 5, 6))
     val result = rdd1.cartesian(rdd2)
     println(s"[测试 cartesian函数]返回结果: ${result.collect.mkString(",")}")
   }
@@ -223,8 +221,8 @@ class ScalaSparkBasicExample extends FunSuite {
     * [测试 intersection 函数]返回结果:[8, 9, 10, 6, 7]
     */
   test("intersection test") {
-    val rdd1 = sc.parallelize(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
-    val rdd2 = sc.parallelize(Array(6, 7, 8, 9, 10, 11))
+    val rdd1 = spark.sparkContext.parallelize(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+    val rdd2 = spark.sparkContext.parallelize(Array(6, 7, 8, 9, 10, 11))
     val result = rdd1.intersection(rdd2)
     println(s"[测试 intersection 函数]返回结果: ${result.collect.mkString(", ")}")
   }
@@ -234,8 +232,8 @@ class ScalaSparkBasicExample extends FunSuite {
     * [测试 union 函数]返回结果:[ 1, 2, 3, 4, 5, 6, 6, 7, 8, 9, 10, 11]
     */
   test("union test") {
-    val rdd1 = sc.parallelize(Array(1, 2, 3, 4, 5, 6))
-    val rdd2 = sc.parallelize(Array(6, 7, 8, 9, 10, 11))
+    val rdd1 = spark.sparkContext.parallelize(Array(1, 2, 3, 4, 5, 6))
+    val rdd2 = spark.sparkContext.parallelize(Array(6, 7, 8, 9, 10, 11))
     val result = rdd1.union(rdd2)
     println(s"[测试 union 函数]返回结果: ${result.collect.mkString(", ")}")
   }
@@ -245,8 +243,8 @@ class ScalaSparkBasicExample extends FunSuite {
     * [测试 subtract 函数]返回结果:[2, 4, 1, 3]
     */
   test("subtract test") {
-    val rdd1 = sc.parallelize(Array(1, 2, 3, 4, 5, 6), 2)
-    val rdd2 = sc.parallelize(Array(5, 6), 2)
+    val rdd1 = spark.sparkContext.parallelize(Array(1, 2, 3, 4, 5, 6), 2)
+    val rdd2 = spark.sparkContext.parallelize(Array(5, 6), 2)
     val result = rdd1.subtract(rdd2, 4) // 第二个参数表示结果RDD的分区数
     println(s"[测试 subtract 函数]返回结果： ${result.collect.mkString(",")}")
     println(s"[测试 subtract 函数]返回分区数: ${result.partitions.size}")
@@ -258,7 +256,7 @@ class ScalaSparkBasicExample extends FunSuite {
     * [测试 takeSample 函数]返回结果: 4 1 2
     */
   test("sample test") {
-    val rdd = sc.parallelize(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+    val rdd = spark.sparkContext.parallelize(Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
     // true 表示有放回去的抽样
     // false 表示没有放回去的抽样
     // 第二个参数为采样率 在 0->1 之间
@@ -276,7 +274,7 @@ class ScalaSparkBasicExample extends FunSuite {
   test("combineByKey test") {
     val list = Array((1, 3), (1, 2), (1, 4), (2, 3), (2, 3), (2, 5))
 
-    val rdd = sc.parallelize(list)
+    val rdd = spark.sparkContext.parallelize(list)
     val result = rdd.combineByKey(i => {
       val arr = ArrayBuffer.empty[Int]
       arr += i
