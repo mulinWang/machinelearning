@@ -9,7 +9,9 @@
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
-        <module>machinelearning-test</module>
+        <module>machinelearning-algorithm-test</module>
+        <module>machinelearning-parquet-test</module>
+        <module>machinelearning-kudu-test</module>
     </modules>
 
     <build>

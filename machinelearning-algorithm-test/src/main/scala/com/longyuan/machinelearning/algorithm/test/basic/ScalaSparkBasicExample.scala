@@ -1,4 +1,4 @@
-package com.longyuan.machinelearning.test.spark
+package com.longyuan.machinelearning.algorithm.test.basic
 
 import org.apache.spark.sql.SparkSession
 import org.scalatest.FunSuite

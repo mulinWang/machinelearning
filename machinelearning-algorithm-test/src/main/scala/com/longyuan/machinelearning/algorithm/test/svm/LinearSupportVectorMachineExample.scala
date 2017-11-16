@@ -1,4 +1,4 @@
-package com.longyuan.machinelearning.test.spark
+package com.longyuan.machinelearning.algorithm.test.svm
 
 import org.apache.spark.ml.classification.LinearSVC
 import org.apache.spark.sql.SparkSession

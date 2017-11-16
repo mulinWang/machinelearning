@@ -1,5 +1,4 @@
-package com.longyuan.machinelearning.test.spark
-
+package com.longyuan.machinelearning.algorithm.test.randomforest
 
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.{RandomForestClassificationModel, RandomForestClassifier}

@@ -28,7 +28,7 @@
         </layout>
     </appender>
 
-    <category name="hifive-data-etl" additivity="true">
+    <category name="machinelearning-test" additivity="true">
         <priority value="${machinelearning.test.log4j.level}"/>
         <appender-ref ref="machinelearning-test"/>
     </category>
