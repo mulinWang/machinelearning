@@ -191,24 +191,6 @@
                 <artifactId>hadoop-mapreduce-client-core</artifactId>
                 <version>2.7.3</version>
             </dependency>
-            <!--&lt;!&ndash;spark&ndash;&gt;-->
-            <!--<dependency>-->
-                <!--<groupId>org.apache.spark</groupId>-->
-                <!--<artifactId>spark-core_2.11</artifactId>-->
-                <!--<version>2.1.1</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-                <!--<groupId>org.apache.spark</groupId>-->
-                <!--<artifactId>spark-streaming_2.11</artifactId>-->
-                <!--<version>2.1.1</version>-->
-            <!--</dependency>-->
-
-            <!--<dependency>-->
-                <!--<groupId>org.apache.spark</groupId>-->
-                <!--<artifactId>spark-sql_2.11</artifactId>-->
-                <!--<version>2.1.1</version>-->
-            <!--</dependency>-->
-
 
             <!--aws-->
             <dependency>

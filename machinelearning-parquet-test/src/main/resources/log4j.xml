@@ -37,6 +37,12 @@
         <appender-ref ref="machinelearning-test-error"/>
     </category>
 
+    <logger name="com.amazonaws.*" additivity="false">
+        <!--指定类的日志级别，会影响指定类日志发出信息的成功与否-->
+        <level value = "WARN" />
+        <appender-ref ref="appender-3" />
+    </logger>
+
     <root>
         <priority value="${machinelearning.test.log4j.level}"/>
         <appender-ref ref="CONSOLE"/>
