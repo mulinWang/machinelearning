@@ -74,7 +74,7 @@
                             <transformers>
                                 <!--没有这个transformer，会报找不到manifest主类的错误-->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.longyuan.hifive.data.loghub2es.HfLoghub2EsDriver</mainClass>
+                                    <mainClass>com.longyuan.machinelearning.event.transform.S3OtherEventDataToCSVDriver</mainClass>
                                 </transformer>
 
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.PluginXmlResourceTransformer"/>
@@ -86,6 +86,7 @@
                                 <excludes>
                                     <exclude>org.apache.spark:*</exclude>
                                     <exclude>org.apache.hadoop:*</exclude>
+                                    <exclude>com.amazonaws:*</exclude>
                                     <exclude>org.scala-lang:*</exclude>
                                 </excludes>
                             </artifactSet>
@@ -127,6 +128,11 @@
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-mapreduce-client-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
         </dependency>
 
         <!--aws-->
