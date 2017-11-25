@@ -62,7 +62,7 @@
                 <machinelearning.test.log4j.level>INFO</machinelearning.test.log4j.level>
                 <machinelearning.test.log4j.home>.</machinelearning.test.log4j.home>
 
-                <machinelearning.event.transform.log4j.level>INFO</machinelearning.event.transform.log4j.level>
+                <machinelearning.event.transform.log4j.level>DEBUG</machinelearning.event.transform.log4j.level>
                 <machinelearning.event.transform.log4j.home>.</machinelearning.event.transform.log4j.home>
 
             </properties>
