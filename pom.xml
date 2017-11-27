@@ -62,9 +62,10 @@
                 <machinelearning.test.log4j.level>INFO</machinelearning.test.log4j.level>
                 <machinelearning.test.log4j.home>.</machinelearning.test.log4j.home>
 
-                <machinelearning.event.transform.log4j.level>INFO</machinelearning.event.transform.log4j.level>
+                <machinelearning.event.transform.log4j.level>DEBUG</machinelearning.event.transform.log4j.level>
                 <machinelearning.event.transform.log4j.home>.</machinelearning.event.transform.log4j.home>
 
+                <driver.master>local[*]</driver.master>
             </properties>
         </profile>
         <profile>
@@ -78,6 +79,10 @@
                 <hifive.data.etl.log4j.level>INFO</hifive.data.etl.log4j.level>
                 <hifive.data.etl.log.home>/mnt/disk1/spark/log</hifive.data.etl.log.home>
 
+                <machinelearning.event.transform.log4j.level>INFO</machinelearning.event.transform.log4j.level>
+                <machinelearning.event.transform.log4j.home>.</machinelearning.event.transform.log4j.home>
+
+                <driver.master></driver.master>
             </properties>
         </profile>
         <profile>
@@ -183,13 +188,13 @@
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-common</artifactId>
-                <version>2.7.3</version>
+                <version>2.9.0</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-mapreduce-client-core</artifactId>
-                <version>2.7.3</version>
+                <version>2.9.0</version>
             </dependency>
 
             <!--aws-->
@@ -209,7 +214,7 @@
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-aws</artifactId>
-                <version>2.7.3</version>
+                <version>2.9.0</version>
             </dependency>
 
             <!--json-->

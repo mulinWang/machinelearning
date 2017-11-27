@@ -74,7 +74,7 @@
                             <transformers>
                                 <!--没有这个transformer，会报找不到manifest主类的错误-->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.longyuan.machinelearning.event.transform.S3OtherEventDataToCSVDriver</mainClass>
+                                    <mainClass>com.longyuan.machinelearning.event.transform.S3LoginEventDataToCSVDriver</mainClass>
                                 </transformer>
 
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.PluginXmlResourceTransformer"/>

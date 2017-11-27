@@ -26,7 +26,6 @@ object S3OtherEventDataToCSVDriver {
         files = args(1)
       }
 
-      println(s"date: $date, file: $files")
     }
     val conf = new SparkConf()
         .setAppName("SparkStreamingWriteToParquetFileExample")
@@ -41,16 +40,18 @@ object S3OtherEventDataToCSVDriver {
     sc.hadoopConfiguration.set("fs.s3a.access.key", accessKey)
     sc.hadoopConfiguration.set("fs.s3a.secret.key", secretKey)
     sc.hadoopConfiguration.set("fs.s3a.endpoint", "s3.cn-north-1.amazonaws.com.cn")
-//    sc.hadoopConfiguration.set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
 
-//    val otherDF = sqlContext.read.json("s3a://csdatas3production/bc4455c1f7a9c0f7/2017-10-16/other_*.log")
+    val path = s"s3a://csdatas3production/bc4455c1f7a9c0f7/$date/$files"
 
-//    val otherDF = sqlContext.read.json(s"file:///data/bc4455c1f7a9c0f7/$date/$files")
-val otherDF = sqlContext.read.json("file:///E:\\2017-10-16\\other*.log")
+    println(s"date: $date")
+    println(s"file: $files")
+    println(s"path: $path")
+
+    val otherDF = sqlContext.read.json(path)
 
     import sqlContext.implicits._
 
-   val newOtherDF = otherDF.toJSON.rdd.map(line => {
+    val newOtherDF = otherDF.toJSON.rdd.map(line => {
       try {
         val json = JSON.parseObject(line)
         json
@@ -61,11 +62,11 @@ val otherDF = sqlContext.read.json("file:///E:\\2017-10-16\\other*.log")
           null
       }
     }).filter(json => null != json &&
-     "other".equals(json.getString("event")) &&
-     {
-     val dataJson = json.getJSONObject("data")
-     (null != dataJson.get("incr") || null != dataJson.get("decr"))
-   })
+      "other".equals(json.getString("event")) &&
+      {
+        val dataJson = json.getJSONObject("data")
+        (null != dataJson.get("incr") || null != dataJson.get("decr"))
+      })
       .map(json => {
         //事件名
         val otherEvent = json.getString("otherEvent")
@@ -127,7 +128,7 @@ val otherDF = sqlContext.read.json("file:///E:\\2017-10-16\\other*.log")
           println(s"exception json: $json")
           null
         }
-    }).filter(other => null != other).toDF()
+      }).filter(other => null != other).toDF()
 
     newOtherDF.printSchema()
     newOtherDF.show(10)
